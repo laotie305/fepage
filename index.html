@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>老铁的个人主页</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* ========== CSS 变量（暗色/亮色双主题） ========== */
+        :root {
+            --accent-start: #f59e0b;
+            --accent-end: #ef4444;
+            --accent-light: #fbbf24;
+            --transition-speed: 0.35s;
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #0f0c29;
+            --bg-gradient: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            --bg-secondary: #24243e;
+            --bg-card: rgba(255, 255, 255, 0.05);
+            --bg-card-hover: rgba(255, 255, 255, 0.07);
+            --bg-navbar: rgba(15, 12, 41, 0.85);
+            --bg-contact: rgba(255, 255, 255, 0.03);
+            --bg-tag: rgba(245, 158, 11, 0.15);
+            --bg-nav-active: rgba(245, 158, 11, 0.18);
+
+            --border-default: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(245, 158, 11, 0.3);
+            --border-contact: rgba(255, 255, 255, 0.12);
+            --border-timeline: rgba(245, 158, 11, 0.3);
+            --border-dot: #24243e;
+
+            --text-primary: #ffffff;
+            --text-heading: #ffffff;
+            --text-secondary: #a0a0c0;
+            --text-muted: #9090b8;
+            --text-accent: #f59e0b;
+            --text-tag: #fbbf24;
+            --text-nav: #b0b0c8;
+            --text-footer: #606080;
+
+            --shadow-card: 0 16px 48px rgba(0, 0, 0, 0.25);
+            --shadow-avatar: 0 8px 32px rgba(245, 158, 11, 0.35);
+            --timeline-dot-bg: #f59e0b;
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #f8f9fa;
+            --bg-gradient: linear-gradient(135deg, #f8f9fa, #e8e6f0, #f0eef5);
+            --bg-secondary: #e8e6f0;
+            --bg-card: rgba(255, 255, 255, 0.85);
+            --bg-card-hover: rgba(255, 255, 255, 0.95);
+            --bg-navbar: rgba(248, 249, 250, 0.88);
+            --bg-contact: rgba(255, 255, 255, 0.6);
+            --bg-tag: rgba(245, 158, 11, 0.1);
+            --bg-nav-active: rgba(245, 158, 11, 0.1);
+
+            --border-default: rgba(0, 0, 0, 0.08);
+            --border-hover: rgba(245, 158, 11, 0.4);
+            --border-contact: rgba(0, 0, 0, 0.1);
+            --border-timeline: rgba(245, 158, 11, 0.35);
+            --border-dot: #f8f9fa;
+
+            --text-primary: #1a1a2e;
+            --text-heading: #111122;
+            --text-secondary: #555570;
+            --text-muted: #666688;
+            --text-accent: #d97706;
+            --text-tag: #b45309;
+            --text-nav: #555570;
+            --text-footer: #888899;
+
+            --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.08);
+            --shadow-avatar: 0 8px 32px rgba(245, 158, 11, 0.25);
+            --timeline-dot-bg: #f59e0b;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+            scroll-behavior: smooth;
+            transition: background var(--transition-speed), color var(--transition-speed);
+        }
+
+        /* ========== 导航栏 ========== */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: var(--bg-navbar);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-default);
+            z-index: 1000;
+            padding: 0 24px;
+            transition: border-color var(--transition-speed), background var(--transition-speed);
+        }
+
+        .navbar-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 60px;
+        }
+
+        .navbar .logo {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-heading);
+            letter-spacing: 0.5px;
+            transition: color var(--transition-speed);
+        }
+
+        .navbar .logo span {
+            background: linear-gradient(135deg, var(--accent-start), var(--accent-end));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 8px;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-nav);
+            text-decoration: none;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--text-heading);
+            background: var(--bg-nav-active);
+        }
+
+        /* 主题切换按钮 */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border: 1px solid var(--border-default);
+            border-radius: 50%;
+            background: transparent;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            color: var(--text-nav);
+            flex-shrink: 0;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--accent-start);
+            color: var(--text-heading);
+            background: var(--bg-nav-active);
+        }
+
+        /* ========== Hero 区域 ========== */
+        .hero {
+            padding: 140px 24px 80px;
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .hero .avatar {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-start), var(--accent-end));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.8rem;
+            margin: 0 auto 24px;
+            box-shadow: var(--shadow-avatar);
+            transition: box-shadow var(--transition-speed);
+        }
+
+        .hero h1 {
+            font-size: 2.4rem;
+            color: var(--text-heading);
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+            transition: color var(--transition-speed);
+        }
+
+        .hero .tagline {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            transition: color var(--transition-speed);
+        }
+
+        /* ========== 板块容器 ========== */
+        .sections {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 24px 80px;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2rem;
+            color: var(--text-heading);
+            margin-bottom: 48px;
+            position: relative;
+            transition: color var(--transition-speed);
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-start), var(--accent-end));
+            margin: 12px auto 0;
+            border-radius: 2px;
+        }
+
+        /* ========== 卡片网格 ========== */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-default);
+            border-radius: 16px;
+            padding: 32px 28px;
+            transition: all 0.35s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent-start), var(--accent-end));
+            opacity: 0;
+            transition: opacity 0.35s ease;
+        }
+
+        .card:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-card);
+            background: var(--bg-card-hover);
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card-icon {
+            font-size: 2.2rem;
+            margin-bottom: 16px;
+        }
+
+        .card h3 {
+            font-size: 1.25rem;
+            color: var(--text-heading);
+            margin-bottom: 10px;
+            transition: color var(--transition-speed);
+        }
+
+        .card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 12px;
+            transition: color var(--transition-speed);
+        }
+
+        .card .tag {
+            display: inline-block;
+            font-size: 0.8rem;
+            padding: 3px 12px;
+            border-radius: 12px;
+            background: var(--bg-tag);
+            color: var(--text-tag);
+            margin: 2px 4px 2px 0;
+            transition: background var(--transition-speed), color var(--transition-speed);
+        }
+
+        /* ========== 时间线 ========== */
+        .timeline {
+            position: relative;
+            padding-left: 32px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--border-timeline);
+            transition: background var(--transition-speed);
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 36px;
+        }
+
+        .timeline-item:last-child {
+            padding-bottom: 0;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -28px;
+            top: 6px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--timeline-dot-bg);
+            border: 2px solid var(--border-dot);
+            z-index: 1;
+            transition: border-color var(--transition-speed);
+        }
+
+        .timeline-item .date {
+            font-size: 0.85rem;
+            color: var(--text-accent);
+            margin-bottom: 4px;
+            transition: color var(--transition-speed);
+        }
+
+        .timeline-item h3 {
+            color: var(--text-heading);
+            font-size: 1.1rem;
+            transition: color var(--transition-speed);
+        }
+
+        .timeline-item p {
+            color: var(--text-muted);
+            font-size: 0.92rem;
+            transition: color var(--transition-speed);
+        }
+
+        /* ========== 联系区域 ========== */
+        .contact-bar {
+            background: var(--bg-contact);
+            border-radius: 16px;
+            padding: 40px 32px;
+            text-align: center;
+            margin-top: 40px;
+            border: 1px solid var(--border-default);
+            transition: all var(--transition-speed);
+        }
+
+        .contact-bar h3 {
+            color: var(--text-heading);
+            font-size: 1.1rem;
+            margin-bottom: 16px;
+            transition: color var(--transition-speed);
+        }
+
+        .contact-links {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .contact-links a {
+            color: var(--text-nav);
+            text-decoration: none;
+            font-size: 0.95rem;
+            padding: 10px 24px;
+            border-radius: 24px;
+            border: 1px solid var(--border-contact);
+            transition: all 0.3s ease;
+        }
+
+        .contact-links a:hover {
+            color: var(--text-heading);
+            border-color: var(--accent-start);
+            background: var(--bg-nav-active);
+        }
+
+        /* ========== 页脚 ========== */
+        footer {
+            text-align: center;
+            padding: 32px 24px;
+            color: var(--text-footer);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border-default);
+            transition: all var(--transition-speed);
+        }
+
+        /* ========== 响应式 ========== */
+        @media (max-width: 640px) {
+            .hero {
+                padding-top: 110px;
+            }
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+            .nav-links a {
+                padding: 6px 12px;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="navbar-inner">
+            <div class="logo">&lt;<span>老铁</span>/&gt;</div>
+            <ul class="nav-links">
+                <li><a href="#work">💼 我的工作</a></li>
+                <li><a href="#life">🌿 我的生活</a></li>
+                <li><a href="#learn">📚 我的学习</a></li>
+                <li>
+                    <button class="theme-toggle" id="themeToggle" aria-label="切换亮色/暗色模式">
+                        🌙
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="avatar">👨‍💻</div>
+        <h1>你好，我是老铁</h1>
+        <p class="tagline">爱瞎琢磨的技术人 · 什么都想试试 · 什么都想做好</p>
+    </section>
+
+    <!-- 内容区 -->
+    <div class="sections">
+
+        <!-- ========== 我的工作 ========== -->
+        <section id="work" class="section">
+            <h2 class="section-title">我的工作</h2>
+            <div class="card-grid">
+                <div class="card">
+                    <div class="card-icon">🏢</div>
+                    <h3>前端开发</h3>
+                    <p>专注构建高性能、可维护的 Web 应用，React + TypeScript 是日常主力。</p>
+                    <span class="tag">React</span>
+                    <span class="tag">TypeScript</span>
+                    <span class="tag">Vue</span>
+                    <span class="tag">Tailwind</span>
+                </div>
+                <div class="card">
+                    <div class="card-icon">⚙️</div>
+                    <h3>后端与 API</h3>
+                    <p>Node.js 与 Python 写服务，注重接口设计与系统可维护性。</p>
+                    <span class="tag">Node.js</span>
+                    <span class="tag">Python</span>
+                    <span class="tag">PostgreSQL</span>
+                    <span class="tag">Redis</span>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🚀</div>
+                    <h3>折腾项目</h3>
+                    <p>开源爱好者，爱用代码解决生活里的小问题，折腾不停。</p>
+                    <span class="tag">GitHub</span>
+                    <span class="tag">开源</span>
+                    <span class="tag">Docker</span>
+                </div>
+            </div>
+
+            <!-- 工作经历时间线 -->
+            <div class="timeline" style="margin-top: 48px;">
+                <div class="timeline-item">
+                    <div class="date">2024 - 至今</div>
+                    <h3>前端开发 · 某科技公司</h3>
+                    <p>负责核心产品的前端架构设计与性能优化。</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="date">2022 - 2024</div>
+                    <h3>全栈开发 · 某创业公司</h3>
+                    <p>从零搭建产品前后端，主导技术选型与团队协作。</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="date">2020 - 2022</div>
+                    <h3>初级开发 · 某互联网公司</h3>
+                    <p>参与多个 B 端管理系统的开发与维护。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== 我的生活 ========== -->
+        <section id="life" class="section">
+            <h2 class="section-title">我的生活</h2>
+            <div class="card-grid">
+                <div class="card">
+                    <div class="card-icon">🏃</div>
+                    <h3>运动健身</h3>
+                    <p>每周跑步 3-4 次，享受出汗的踏实感。偶尔去举铁，练块儿。</p>
+                    <span class="tag">跑步</span>
+                    <span class="tag">健身</span>
+                </div>
+                <div class="card">
+                    <div class="card-icon">📷</div>
+                    <h3>摄影记录</h3>
+                    <p>用镜头捕捉日常里的好瞬间，街拍和风光是心头好。</p>
+                    <span class="tag">街拍</span>
+                    <span class="tag">风光</span>
+                    <span class="tag">Lightroom</span>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🎵</div>
+                    <h3>音乐与阅读</h3>
+                    <p>闲时听爵士或民谣，每月至少一本书，让自己不浮躁。</p>
+                    <span class="tag">爵士</span>
+                    <span class="tag">阅读</span>
+                    <span class="tag">Kindle</span>
+                </div>
+            </div>
+
+            <!-- 生活态度 -->
+            <div class="contact-bar" style="margin-top: 48px;">
+                <h3>🌱 老铁信条</h3>
+                <p style="color: var(--text-muted); margin-top: 8px;">"认真工作，热爱生活，保持好奇，保持善良。"</p>
+            </div>
+        </section>
+
+        <!-- ========== 我的学习 ========== -->
+        <section id="learn" class="section">
+            <h2 class="section-title">我的学习</h2>
+            <div class="card-grid">
+                <div class="card">
+                    <div class="card-icon">🤖</div>
+                    <h3>AI & 机器学习</h3>
+                    <p>系统学深度学习和 NLP，关注大模型原理与落地。</p>
+                    <span class="tag">PyTorch</span>
+                    <span class="tag">LLM</span>
+                    <span class="tag">Hugging Face</span>
+                </div>
+                <div class="card">
+                    <div class="card-icon">☁️</div>
+                    <h3>云原生 & DevOps</h3>
+                    <p>深入 K8s、CI/CD 与云服务架构，提升工程化水平。</p>
+                    <span class="tag">K8s</span>
+                    <span class="tag">Docker</span>
+                    <span class="tag">AWS</span>
+                    <span class="tag">GitHub Actions</span>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🌐</div>
+                    <h3>英语 & 技术写作</h3>
+                    <p>每天练口语，用英文写技术笔记，和国际接轨。</p>
+                    <span class="tag">英语</span>
+                    <span class="tag">写作</span>
+                    <span class="tag">Duolingo</span>
+                </div>
+            </div>
+
+            <!-- 学习进度 -->
+            <div class="timeline" style="margin-top: 48px;">
+                <div class="timeline-item">
+                    <div class="date">📖 近期计划</div>
+                    <h3>读完《Deep Learning with Python》</h3>
+                    <p>进度：第 6 章 / 共 12 章</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="date">🎯 目标</div>
+                    <h3>考取 AWS Solutions Architect 认证</h3>
+                    <p>预计 2025 年下半年参加考试</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- 联系方式 -->
+    <div class="sections">
+        <div class="contact-bar">
+            <h3>📬 联系我</h3>
+            <div class="contact-links">
+                <a href="#">📧 Email</a>
+                <a href="#">🐙 GitHub</a>
+                <a href="#">💼 LinkedIn</a>
+                <a href="#">📝 博客</a>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        © 2025 老铁 · 用 ❤️ 和代码瞎折腾
+    </footer>
+
+    <script>
+        // ===== 主题切换逻辑 =====
+        const html = document.documentElement;
+        const themeToggle = document.getElementById('themeToggle');
+        const STORAGE_KEY = 'page-theme';
+
+        function setTheme(theme) {
+            html.setAttribute('data-theme', theme);
+            themeToggle.textContent = theme === 'dark' ? '🌙' : '☀️';
+            try {
+                localStorage.setItem(STORAGE_KEY, theme);
+            } catch (e) { /* noop */ }
+        }
+
+        function getPreferredTheme() {
+            const stored = tryParseStoredTheme();
+            if (stored) return stored;
+            // 没有手动选择过，看系统偏好
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                return 'light';
+            }
+            return 'dark';
+        }
+
+        function tryParseStoredTheme() {
+            try { return localStorage.getItem(STORAGE_KEY); } catch (e) { return null; }
+        }
+
+        // 初始化主题
+        setTheme(getPreferredTheme());
+
+        // 监听系统偏好变化
+        if (window.matchMedia) {
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+                if (!tryParseStoredTheme()) {
+                    setTheme(e.matches ? 'dark' : 'light');
+                }
+            });
+        }
+
+        // 点击切换
+        themeToggle.addEventListener('click', () => {
+            const current = html.getAttribute('data-theme');
+            setTheme(current === 'dark' ? 'light' : 'dark');
+        });
+
+        // 导航点击平滑滚动
+        const navLinks = document.querySelectorAll('.nav-links a');
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').slice(1);
+                const targetSection = document.getElementById(targetId);
+                if (targetSection) {
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    link.classList.add('active');
+                    targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // 滚动时自动高亮导航
+        const sections = document.querySelectorAll('.section');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    navLinks.forEach(link => {
+                        link.classList.toggle('active', link.getAttribute('href') === '#' + id);
+                    });
+                }
+            });
+        }, { threshold: 0.3 });
+        sections.forEach(section => observer.observe(section));
+
+        // 卡片 3D 微交互
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const rotateX = ((y - centerY) / centerY) * -4;
+                const rotateY = ((x - centerX) / centerX) * 4;
+                card.style.transform = `translateY(-6px) perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0) perspective(800px) rotateX(0) rotateY(0)';
+            });
+        });
+    </script>
+</body>
+</html>
